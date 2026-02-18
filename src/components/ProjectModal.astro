@@ -63,8 +63,9 @@ import { projects } from "../data/projects";
   </div>
 </div>
 
-<script define:vars={{ projectsData: projects }}>
+<script define:vars={{ projectsData: projects, baseUrl: import.meta.env.BASE_URL }}>
   window.__PROJECTS__ = projectsData;
+  window.__BASE_URL__ = baseUrl;
 </script>
 
 <script>
@@ -93,7 +94,7 @@ import { projects } from "../data/projects";
     modalSubtitle.textContent = project.subtitle;
     modalCategory.textContent = project.category;
     modalGradient.className = `absolute inset-0 bg-gradient-to-br ${project.color} opacity-90`;
-    modalImage.src = project.image;
+    modalImage.src = ((window as any).__BASE_URL__ + project.image.replace(/^\//, ''));
     modalImage.alt = project.title;
     modalImage.style.display = "";
     modalHighlights.textContent = project.highlights;
