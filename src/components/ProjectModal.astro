@@ -94,7 +94,7 @@ import { projects } from "../data/projects";
     modalSubtitle.textContent = project.subtitle;
     modalCategory.textContent = project.category;
     modalGradient.className = `absolute inset-0 bg-gradient-to-br ${project.color} opacity-90`;
-    modalImage.src = ((window as any).__BASE_URL__ + project.image.replace(/^\//, ''));
+    modalImage.src = ((window as any).__BASE_URL__ + '/' + project.image.replace(/^\//, '')).replace(/\/\//g, '/');
     modalImage.alt = project.title;
     modalImage.style.display = "";
     modalHighlights.textContent = project.highlights;
