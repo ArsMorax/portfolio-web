@@ -1,0 +1,173 @@
+---
+import { site, nav } from "../data/site";
+import { withBase } from "../lib/url";
+
+const current = Astro.url.pathname.replace(/\/+$/, "") || "/";
+
+function isActive(href: string): boolean {
+  const target = withBase(href).replace(/\/+$/, "") || "/";
+  if (href === "/") return current === target;
+  return current === target || current.startsWith(`${target}/`);
+}
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 border-b border-line/0 transition-[background-color,border-color,backdrop-filter] duration-300"
+>
+  {/* Reading progress. Width is driven by scroll position in the script below. */}
+  <div
+    id="scroll-progress"
+    class="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-150 ease-out"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+    <a
+      href={withBase("/")}
+      class="group flex items-center gap-2.5"
+      aria-label={`${site.shortName} — home`}
+    >
+      <span
+        class="flex h-7 w-7 items-center justify-center rounded-md border border-line-strong bg-bg-raised font-mono text-[11px] font-medium text-accent transition-colors duration-300 group-hover:border-accent/50"
+      >
+        {site.initials}
+      </span>
+      <span class="text-sm font-medium tracking-tight">{site.shortName}</span>
+    </a>
+
+    <nav class="hidden items-center gap-1 md:flex" aria-label="Primary">
+      {
+        nav.map((link) => (
+          <a
+            href={withBase(link.href)}
+            aria-current={isActive(link.href) ? "page" : undefined}
+            class:list={[
+              "relative rounded-md px-3 py-1.5 text-sm transition-colors duration-200",
+              isActive(link.href)
+                ? "text-fg"
+                : "text-fg-muted hover:text-fg",
+            ]}
+          >
+            {link.label}
+            {isActive(link.href) && (
+              <span class="absolute inset-x-3 -bottom-px h-px bg-accent" />
+            )}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-3">
+      {
+        site.availability.open && (
+          <span class="hidden items-center gap-2 lg:inline-flex">
+            <span class="relative flex h-1.5 w-1.5">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+              <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+            </span>
+            <span class="label">{site.availability.label}</span>
+          </span>
+        )
+      }
+
+      <a href={`mailto:${site.email}`} class="btn btn-ghost hidden sm:inline-flex">
+        Get in touch
+      </a>
+
+      <button
+        id="menu-toggle"
+        type="button"
+        class="flex h-9 w-9 items-center justify-center rounded-md border border-line-strong text-fg-muted transition-colors hover:text-fg md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Open menu"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+          <path id="menu-open-icon" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+          <path id="menu-close-icon" class="hidden" stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-nav"
+    class="hidden border-t border-line bg-bg/95 px-6 py-3 backdrop-blur-xl md:hidden"
+    aria-label="Mobile"
+  >
+    {
+      nav.map((link) => (
+        <a
+          href={withBase(link.href)}
+          aria-current={isActive(link.href) ? "page" : undefined}
+          class:list={[
+            "block border-b border-line/60 py-3 text-sm last:border-0",
+            isActive(link.href) ? "text-accent" : "text-fg-muted",
+          ]}
+        >
+          {link.label}
+        </a>
+      ))
+    }
+    <a href={`mailto:${site.email}`} class="block py-3 text-sm text-fg-muted">
+      {site.email}
+    </a>
+  </nav>
+</header>
+
+<script>
+  const header = document.getElementById("site-header")!;
+  const progress = document.getElementById("scroll-progress")!;
+  const toggle = document.getElementById("menu-toggle")!;
+  const mobileNav = document.getElementById("mobile-nav")!;
+  const openIcon = document.getElementById("menu-open-icon")!;
+  const closeIcon = document.getElementById("menu-close-icon")!;
+
+  // Header only gains its background once the page has scrolled, so the hero
+  // reads as one uninterrupted surface at rest.
+  let ticking = false;
+
+  function onScroll() {
+    const y = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+
+    header.classList.toggle("bg-bg/80", y > 8);
+    header.classList.toggle("backdrop-blur-xl", y > 8);
+    header.classList.toggle("border-line", y > 8);
+
+    progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+    ticking = false;
+  }
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(onScroll);
+    },
+    { passive: true },
+  );
+  onScroll();
+
+  function setMenu(open: boolean) {
+    mobileNav.classList.toggle("hidden", !open);
+    openIcon.classList.toggle("hidden", open);
+    closeIcon.classList.toggle("hidden", !open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+
+  toggle.addEventListener("click", () => {
+    setMenu(mobileNav.classList.contains("hidden"));
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !mobileNav.classList.contains("hidden")) {
+      setMenu(false);
+      toggle.focus();
+    }
+  });
+</script>

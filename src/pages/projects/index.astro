@@ -1,0 +1,128 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import ContactCTA from "../../components/ContactCTA.astro";
+import { projects, categoryLabels } from "../../data/projects";
+import type { ProjectCategory } from "../../data/projects";
+
+// Only offer filters for categories that actually have projects in them.
+const present = [...new Set(projects.map((p) => p.category))] as ProjectCategory[];
+const filters = [
+  { value: "all", label: "All", count: projects.length },
+  ...present.map((cat) => ({
+    value: cat,
+    label: categoryLabels[cat],
+    count: projects.filter((p) => p.category === cat).length,
+  })),
+];
+---
+
+<Layout
+  title="Projects"
+  description="Selected engineering work — a QGIS geospatial platform, full-stack applications across Laravel, the T3 Stack, Vue and Go, and ongoing LLM evaluation research."
+>
+  <section class="border-b border-line">
+    <div class="mx-auto max-w-5xl px-6 pb-16 pt-32 sm:pt-40">
+      <SectionHeading
+        eyebrow="Work"
+        title="Projects"
+        lead="Professional delivery work alongside personal builds. Each side project deliberately uses a stack I had not worked with before, which is why the list looks less consistent than it could."
+      />
+    </div>
+  </section>
+
+  <section>
+    <div class="mx-auto max-w-5xl px-6 py-12 sm:py-16">
+      <div
+        data-reveal
+        class="flex flex-wrap gap-2"
+        role="group"
+        aria-label="Filter projects by category"
+      >
+        {
+          filters.map((filter) => (
+            <button
+              type="button"
+              data-filter={filter.value}
+              aria-pressed={filter.value === "all" ? "true" : "false"}
+              class="filter-btn inline-flex items-center gap-2 rounded-md border border-line px-3 py-1.5 text-sm text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+            >
+              {filter.label}
+              <span class="font-mono text-[10px] text-fg-subtle">{filter.count}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div id="project-grid" class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          projects.map((project, i) => (
+            <div data-category={project.category} class="contents-wrapper">
+              <ProjectCard project={project} index={i} />
+            </div>
+          ))
+        }
+      </div>
+
+      <p id="empty-state" class="hidden py-16 text-center text-sm text-fg-subtle">
+        Nothing in this category yet.
+      </p>
+    </div>
+  </section>
+
+  <ContactCTA />
+</Layout>
+
+<style>
+  /* The wrapper exists only to carry the category for filtering; it must not
+     introduce a second box inside the grid. */
+  .contents-wrapper {
+    display: contents;
+  }
+  .contents-wrapper[hidden] {
+    display: none;
+  }
+
+  .filter-btn[aria-pressed="true"] {
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  const items = document.querySelectorAll<HTMLElement>("[data-category]");
+  const empty = document.getElementById("empty-state")!;
+
+  function apply(value: string) {
+    let visible = 0;
+
+    items.forEach((item) => {
+      const match = value === "all" || item.dataset.category === value;
+      item.hidden = !match;
+      if (match) visible++;
+    });
+
+    buttons.forEach((btn) => {
+      btn.setAttribute("aria-pressed", String(btn.dataset.filter === value));
+    });
+
+    empty.classList.toggle("hidden", visible > 0);
+
+    // Reflect the filter in the URL so a filtered view can be shared or
+    // survive a back navigation.
+    const url = new URL(window.location.href);
+    if (value === "all") url.searchParams.delete("filter");
+    else url.searchParams.set("filter", value);
+    history.replaceState(null, "", url);
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => apply(btn.dataset.filter!));
+  });
+
+  const initial = new URL(window.location.href).searchParams.get("filter");
+  if (initial) apply(initial);
+</script>

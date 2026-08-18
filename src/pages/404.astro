@@ -1,0 +1,27 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { withBase } from "../lib/url";
+---
+
+<Layout title="Not found" description="That page does not exist.">
+  <section class="relative overflow-hidden">
+    <div class="bg-grid mask-fade-b pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"></div>
+
+    <div class="relative mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center px-6 py-32 text-center">
+      <p class="font-mono text-7xl font-medium text-line-strong sm:text-8xl">404</p>
+
+      <h1 class="mt-6 text-3xl font-semibold sm:text-4xl">This page does not exist</h1>
+
+      <p class="prose-body mt-4 max-w-md">
+        The link may be out of date, or the URL might have a typo in it. Everything
+        that does exist is one of these:
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+        <a href={withBase("/")} class="btn btn-primary">Home</a>
+        <a href={withBase("/projects")} class="btn btn-ghost">Projects</a>
+        <a href={withBase("/about")} class="btn btn-ghost">About</a>
+      </div>
+    </div>
+  </section>
+</Layout>

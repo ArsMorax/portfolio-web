@@ -1,0 +1,134 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import ExperienceTimeline from "../components/ExperienceTimeline.astro";
+import AIFocus from "../components/AIFocus.astro";
+import ModelComparison from "../components/ModelComparison.astro";
+import SkillMatrix from "../components/SkillMatrix.astro";
+import ContactCTA from "../components/ContactCTA.astro";
+import { site } from "../data/site";
+import { aiStatement } from "../data/ai";
+---
+
+<Layout
+  title="About"
+  description="Software engineer with experience across C#, Node.js, React, TypeScript and Python — delivering large-scale systems in 5+ person teams, including software for government institutions, and researching how language models reason."
+>
+  {/* ── Intro ────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="bg-grid mask-fade-b absolute inset-0 opacity-40"></div>
+    </div>
+
+    <div class="relative mx-auto max-w-4xl px-6 pb-20 pt-32 sm:pt-40">
+      <div data-reveal class="flex items-center gap-3">
+        <span class="label label-accent">About</span>
+        <span class="h-px w-8 bg-accent/40" aria-hidden="true"></span>
+        <span class="label">{site.role}</span>
+      </div>
+
+      <h1 data-reveal style="--reveal-delay: 70ms" class="mt-6 max-w-3xl text-4xl font-semibold sm:text-5xl">
+        Systems all the way through, and a standing curiosity about how models reason
+      </h1>
+
+      <div data-reveal style="--reveal-delay: 140ms" class="mt-10 max-w-2xl space-y-5">
+        <p class="prose-body">
+          I am a software engineer with intermediate experience, having built and
+          collaborated on <strong>multiple 5+ person large-scale projects</strong> —
+          including software systems built for government institutions, and a
+          relatively recent QGIS-based project where QGIS was used as the on-screen
+          mapping tool.
+        </p>
+        <p class="prose-body">
+          Alongside that work I develop personal projects on the side, with a focus
+          on continuous improvement and on exploring technologies and stacks I have
+          not had the opportunity to work on professionally yet.
+        </p>
+        <p class="prose-body">
+          Across C#, Node.js, React.js, JS/TS, Python, database management, automation
+          and backend development, what I particularly enjoy is
+          <strong>working holistically on all parts of a system</strong> — from
+          designing the application logic and backend architecture, up to implementing
+          user interfaces, integrations and automation workflows.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Experience ───────────────────────────────────────────── */}
+  <section class="border-b border-line">
+    <div class="mx-auto max-w-4xl px-6 py-20 sm:py-24">
+      <SectionHeading
+        index="01"
+        eyebrow="Experience"
+        title="Where the work has been"
+      />
+
+      <div class="mt-14">
+        <ExperienceTimeline />
+      </div>
+    </div>
+  </section>
+
+  {/* ── AI ───────────────────────────────────────────────────── */}
+  <section id="ai" class="scroll-mt-24 border-b border-line">
+    <div class="mx-auto max-w-4xl px-6 py-20 sm:py-24">
+      <SectionHeading
+        index="02"
+        eyebrow="Artificial intelligence"
+        title="What I am actually chasing"
+      />
+
+      <div data-reveal class="mt-10 max-w-2xl space-y-5">
+        {aiStatement.map((para) => <p class="prose-body">{para}</p>)}
+      </div>
+
+      <div class="mt-14">
+        <AIFocus />
+      </div>
+
+      <figure data-reveal class="mt-14 border-l-2 border-accent pl-6">
+        <blockquote class="text-lg leading-relaxed text-fg sm:text-xl">
+          Beyond experimenting with individual models, I find genuine delight in
+          pitting them against one another to work out their optimal use cases.
+        </blockquote>
+      </figure>
+
+      <div class="mt-14">
+        <h3 data-reveal class="text-2xl font-semibold">A comparison I keep returning to</h3>
+        <div class="mt-6">
+          <ModelComparison />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Skills ───────────────────────────────────────────────── */}
+  <section class="border-b border-line">
+    <div class="mx-auto max-w-4xl px-6 py-20 sm:py-24">
+      <SectionHeading
+        index="03"
+        eyebrow="Toolkit"
+        title="What I work with"
+        lead="Grouped by where it sits in a system, and marked by how much evidence sits behind it rather than by a percentage I made up."
+      />
+
+      <div class="mt-12">
+        <SkillMatrix />
+      </div>
+    </div>
+  </section>
+
+  {/* ── Closing ──────────────────────────────────────────────── */}
+  <section class="border-b border-line">
+    <div class="mx-auto max-w-4xl px-6 py-20 sm:py-24">
+      <p data-reveal class="prose-body max-w-2xl text-xl sm:text-2xl">
+        At the end of the day I simply find great joy in building products, messing
+        with technology, and continuing to broaden my horizons in both software
+        engineering and AI on an ongoing basis.
+      </p>
+    </div>
+  </section>
+
+  <ContactCTA />
+</Layout>

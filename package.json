@@ -1,16 +1,26 @@
 {
-  "name": "portfolio",
+  "name": "portfolio-web",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro check && astro build",
+    "build:fast": "astro build",
     "preview": "astro preview",
+    "check": "astro check",
+    "og": "rsvg-convert -w 1200 -h 630 design/og.svg -o public/og.png",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.17.1",
     "tailwindcss": "^4.1.18"
-  }
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.3"
+  },
+  "description": "Portfolio of Muhammad Budi Aji \u2014 software engineer.",
+  "private": true
 }
