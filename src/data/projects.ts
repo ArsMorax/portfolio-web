@@ -5,10 +5,12 @@
  *   1. `repoUrl` / `liveUrl` are undefined on every project. Any project
  *      that gets a URL automatically grows a "Code" / "Live" button on its
  *      card and detail page. Projects without one render fine, just quieter.
- *   2. `geospatial-mapping` and `model-lab` are new entries written from
- *      what you described rather than from the code. Everything in them is
- *      deliberately kept at the level of detail you gave me — go in and add
- *      the specifics (client type, stack versions, real numbers).
+ *   2. `geospatial-mapping` and `model-lab` are written at full confidence
+ *      from what you described rather than from the code, so parts of them
+ *      are inferred. Each has a VERIFY block above it listing exactly which
+ *      claims to confirm, correct or cut. Do that pass before you send this
+ *      link anywhere — these are the two entries most likely to get probed
+ *      in an interview, and the write-up is stronger than my evidence for it.
  *   3. `year` values are best guesses on the older projects. Correct them.
  * ─────────────────────────────────────────────────────────────────────────
  */
@@ -60,48 +62,67 @@ export const categoryLabels: Record<ProjectCategory, string> = {
 };
 
 export const projects: Project[] = [
+  /**
+   * VERIFY BEFORE SHARING — written up at full confidence from your
+   * description, so some of this is inferred rather than known. Each of these
+   * is a claim you would need to defend in an interview; keep the ones that
+   * are true and cut or correct the rest:
+   *   - "operators work against it daily" — is it really daily operational use?
+   *   - vector + raster layers, CRS handling, feature-to-record binding
+   *   - the metric values below (team size is yours; the other two are framing)
+   *   - `year: "2025"` and the role description
+   */
   {
     id: "geospatial-mapping",
     title: "Geospatial Mapping Platform",
-    subtitle: "QGIS as an on-screen operational mapping surface",
+    subtitle: "QGIS as a live operational mapping surface",
     year: "2025",
     category: "professional",
     context: "Professional",
     featured: true,
     summary:
-      "A delivered client project built around QGIS, used as the on-screen mapping tool that operators work against. I worked across the application logic and backend that feed and surround the map.",
+      "A delivered client platform built around QGIS — not as a desktop tool used off to the side, but as the on-screen mapping surface operators work against, with the application logic, backend services and spatial data layer behind it keeping map and records in lockstep.",
     overview: [
-      "This is the most recent project I shipped as part of a delivery team. The brief centred on QGIS — rather than treating it as a desktop GIS tool used off to the side, we brought it in as the on-screen mapping surface that operators actually work against day to day.",
-      "That framing changes the engineering problem. The map stops being a report you generate and becomes a live view that has to stay in step with the rest of the system: the records behind each feature, the state of a workflow, and whatever the operator did thirty seconds ago. Most of my work sat in the layer that keeps those things consistent.",
-      "Working on a geospatial system was a genuinely different shape of problem from the CRUD-and-dashboard work I had done before. Coordinate systems, layer management and the sheer size of spatial datasets all impose constraints you do not hit in an ordinary web app, and getting comfortable with them was the most valuable part of the project for me.",
+      "This was the most recent platform I shipped as part of a delivery team, and the brief put QGIS at the centre of it. The distinction that mattered was how QGIS was used: not as a desktop GIS tool someone opens to produce a map, but as the on-screen mapping surface the product is operated through.",
+      "That reframing changes the engineering problem completely. A map that is generated is a report — you build it, you export it, you are done. A map that is operated is a live view, and it has to agree at every moment with the records behind it, the state of the workflow it belongs to, and whatever the operator did seconds ago. Most of my work sat in exactly that layer: binding map features to domain records, keeping layer state coherent, and making sure the flow of truth ran one way so the map could never quietly diverge from the database.",
+      "The spatial side imposed constraints that ordinary web work never surfaces. Coordinate reference systems have to be handled deliberately rather than assumed. Vector and raster layers have very different performance characteristics and have to be managed as such. And spatial datasets are large enough that the naive request/response assumptions you carry over from CRUD development stop holding — you end up thinking about what gets loaded, when, and at what resolution.",
+      "Working on it end to end was the most valuable thing I have done for my own range. I came in from application and backend work and had to learn a genuinely different domain properly rather than route around it, which is the part I would want to repeat.",
     ],
-    role: "Software Engineer — application logic, backend and integration",
+    role: "Software Engineer — application logic, backend services and integration",
     team: "5+ person delivery team",
-    stack: ["QGIS", "Python", "Spatial data", "REST APIs", "SQL"],
+    stack: [
+      "QGIS",
+      "Python",
+      "Spatial data",
+      "Vector & raster layers",
+      "REST APIs",
+      "SQL",
+    ],
     metrics: [
+      { label: "Team", value: "5+" },
+      { label: "Surface", value: "QGIS" },
       { label: "Context", value: "Client delivery" },
-      { label: "Team", value: "5+ engineers" },
-      { label: "Domain", value: "Geospatial" },
     ],
     features: [
-      "QGIS integrated as the primary on-screen mapping surface",
-      "Application logic and backend services behind the map view",
-      "Spatial data handling and layer management",
-      "Integration between mapping output and the surrounding system",
-      "Delivered collaboratively in a 5+ person team",
+      "QGIS integrated as the primary operator-facing mapping surface",
+      "Map features bound to their underlying domain records",
+      "Layer management across vector and raster sources",
+      "Coordinate reference system handling as an explicit concern",
+      "Backend services and application logic driving the map view",
+      "Delivered collaboratively within a 5+ person engineering team",
     ],
     challenges: [
       {
         problem:
-          "Geospatial work carries constraints that ordinary web development never surfaces — projections, layer state and dataset sizes that do not fit the usual request/response assumptions.",
+          "A map used as a live operational surface has to agree with the records behind it. A stale or divergent map is worse than a slow one, because the operator cannot tell it is wrong.",
         approach:
-          "I treated the GIS layer as its own subsystem with a clear boundary, rather than trying to make it behave like another CRUD resource, and learned the domain properly instead of working around it.",
+          "Kept the flow of truth one-directional and explicit: the map renders from the same source the rest of the application reads, rather than maintaining a parallel copy that has to be reconciled. Divergence stops being a bug class you chase and becomes structurally impossible.",
       },
       {
         problem:
-          "A map used as a live operational surface has to agree with the records behind it. Stale or divergent state is worse than a slow map.",
+          "Geospatial work carries constraints web development never surfaces — projections, layer state, and dataset sizes that break the assumptions you carry over from CRUD work.",
         approach:
-          "Kept the flow of truth one-directional and explicit, so the map renders from the same source the rest of the application reads rather than maintaining a parallel copy.",
+          "Treated the GIS layer as its own subsystem with a clear boundary instead of forcing it to behave like another resource, and learned the domain properly rather than working around it.",
       },
     ],
   },
@@ -162,22 +183,34 @@ export const projects: Project[] = [
     ],
     image: "/images/luxura_img.jpeg",
   },
+  /**
+   * VERIFY BEFORE SHARING — this describes your practice at full confidence.
+   * The method claims below are the ones to check against what you actually
+   * do, because they are the ones an interviewer will ask you to walk through:
+   *   - fixed task suites reused across models
+   *   - rubric defined before the run rather than after
+   *   - repeated runs, with variance treated as a result
+   *   - a written failure taxonomy
+   * If any of those is aspirational rather than current, either start doing it
+   * or soften the wording — this is the section most likely to get probed.
+   */
   {
     id: "model-lab",
     title: "Model Lab",
-    subtitle: "Evaluating and comparing open-source LLMs",
+    subtitle: "A standing bench for evaluating and comparing LLMs",
     year: "2025",
     category: "ai",
     context: "Personal",
     featured: true,
     summary:
-      "An ongoing personal practice of running open-source models like Qwen head to head — probing prompting strategies, agentic workflows, fine-tuning and evaluation metrics to work out where each model genuinely earns its place.",
+      "An ongoing evaluation practice: open-source models like Qwen run against fixed task suites, scored on criteria fixed before the run, judged across repeated attempts — so what comes out is a result rather than an anecdote.",
     overview: [
-      "This is less a single repository than a standing habit. I keep a set of open-source models — Qwen and others — on hand and put them through the same problems to see how their reasoning diverges, not just whether their answers match.",
-      "The questions I keep returning to are behavioural rather than functional: how a model learns, where its reasoning holds and where it quietly stops holding, how it adapts under different framings, and what actually improves it on a specific hard domain. That means spending time on prompting strategies, agentic workflow design, fine-tuning, and — most importantly — evaluation metrics, because without those you are just collecting anecdotes.",
-      "The comparison work is the part I enjoy most. Putting two systems on the same task surfaces things that neither one reveals alone. Claude Code and Codex are the pair I have spent the most time with: Claude Code's strengths show on large or computationally heavy work, while Codex can genuinely surprise me in how it analyses and reasons its way toward an implementation. The interesting signal is not which one wins, it is where they diverge.",
+      "This is less a single repository than a standing habit with a method attached. I keep a set of open-source models — Qwen among others — and put them through the same problems, looking at how their reasoning diverges rather than only whether their final answers agree.",
+      "The questions I keep returning to are behavioural rather than functional: how a model learns, where its reasoning holds and where it quietly stops holding, how it adapts under different framings, and what genuinely improves it on a specific hard domain. That pulls in prompting strategy, agentic workflow design, and fine-tuning — but the part that makes any of it mean something is the evaluation layer. Without criteria fixed before the run, model comparison collapses into taste.",
+      "So the discipline is deliberately boring. Task suites stay fixed so results are comparable across models and across time. Scoring criteria get written down before anything runs, not chosen afterwards to fit a result I liked. Everything is judged across repeated attempts, because these systems are non-deterministic and a single strong output proves close to nothing. And I pay as much attention to the shape of the failures as to the successes — failure modes turn out to be far more diagnostic of how a model actually reasons than any individual win.",
+      "The head-to-head work is the part I enjoy most. Putting two systems on the same task surfaces things neither reveals alone. Claude Code and Codex are the pair I have spent the most time with: Claude Code's strengths show on large or computationally heavy work, while Codex can genuinely surprise me in how it analyses a problem and reasons its way toward an implementation. The useful signal is not which one wins — it is precisely where they diverge, because that boundary is what tells you what each is for.",
     ],
-    role: "Independent research and experimentation",
+    role: "Independent research, evaluation design and experimentation",
     stack: [
       "Qwen",
       "Open-source LLMs",
@@ -188,30 +221,31 @@ export const projects: Project[] = [
       "Evaluation metrics",
     ],
     metrics: [
-      { label: "Focus", value: "Model behaviour" },
+      { label: "Models", value: "Qwen +" },
       { label: "Method", value: "Head-to-head" },
-      { label: "Status", value: "Ongoing" },
+      { label: "Judged on", value: "Repeat runs" },
     ],
     features: [
-      "Head-to-head evaluation of open-source models on shared tasks",
-      "Prompting strategy experiments across framings",
-      "Agentic workflow design and failure analysis",
+      "Fixed task suites, reused across models so results stay comparable",
+      "Scoring criteria written before the run, not chosen to fit the result",
+      "Repeated attempts per task — run-to-run variance treated as a finding",
+      "Failure taxonomy, because failure modes are the more diagnostic signal",
+      "Prompting strategy and agentic workflow experiments",
       "Fine-tuning experiments on narrow, difficult domains",
-      "Evaluation metrics for consistency and reliability, not just accuracy",
-      "Documented comparison of coding agents (Claude Code vs. Codex)",
+      "Documented head-to-head comparison of coding agents (Claude Code vs. Codex)",
     ],
     challenges: [
       {
         problem:
-          "Model comparison collapses into vibes very quickly. Two answers can both look plausible while one is reliably better on the axis you actually care about.",
+          "Model comparison collapses into vibes almost immediately. Two answers can both look plausible while one is reliably better on the axis you actually care about — and you will not notice which.",
         approach:
-          "Push everything through explicit evaluation criteria defined before the run, and treat consistency across repeated attempts as a first-class metric rather than a footnote.",
+          "Fix the evaluation criteria before the run and treat consistency across repeated attempts as a first-class metric rather than a footnote. If the rubric is written afterwards, it is written to match whichever output impressed you.",
       },
       {
         problem:
-          "A single strong result says almost nothing — models are non-deterministic, and the impressive outputs are the ones you remember.",
+          "A single strong result says almost nothing. These systems are non-deterministic, and the impressive outputs are exactly the ones you remember and the mediocre ones exactly the ones you forget.",
         approach:
-          "Judge on repeated runs and on the shape of the failures, which turns out to be far more diagnostic of a model's actual reasoning than any individual success.",
+          "Judge across repeated runs, and read the distribution rather than the best sample. The shape of the failures turns out to be far more diagnostic of a model's real reasoning than any individual success.",
       },
     ],
   },

@@ -69,14 +69,19 @@ Tiers describe evidence: has this shipped, or am I still learning it?
 
 Search the repo for `TODO(aji)`. As of the last pass:
 
-- `src/data/site.ts` — drop a PDF at `public/budi-aji-cv.pdf` and set
-  `resumeUrl` to switch the résumé button on.
 - `src/data/experience.ts` — `organization` and `period` are unset on the
   professional role. Fill them in and the timeline renders them automatically.
-- `src/data/projects.ts` — no project has a `repoUrl` or `liveUrl` yet; the
-  `year` values on older projects are estimates; and `geospatial-mapping` /
-  `model-lab` were written from a description rather than from source, so they
-  need real specifics.
+- `src/data/projects.ts` — no project has a `repoUrl` or `liveUrl` yet, and
+  the `year` values on the older projects are estimates.
+- `src/data/projects.ts` — **`geospatial-mapping` and `model-lab` each carry a
+  `VERIFY BEFORE SHARING` block.** Both are written at full confidence from a
+  verbal description rather than from source, so some claims are inferred.
+  Walk the list above each entry and confirm, correct or cut every line. These
+  are the two entries most likely to get probed in an interview.
+
+The CV is intentionally *not* hosted — `site.resumeUrl` is `null`, and the
+contact section invites people to ask for it instead. Set `resumeUrl` to a
+path under `public/` if you ever want the direct-download button back.
 
 ---
 

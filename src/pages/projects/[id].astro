@@ -24,10 +24,18 @@ interface Props {
 
 const { project, prev, next } = Astro.props;
 
+const categoryLabel = categoryLabels[project.category];
+
+// "Professional" is both a category and a context, so for those projects the
+// two would otherwise be printed twice side by side.
+const contextIsRedundant = project.context === categoryLabel;
+
+const eyebrow = [categoryLabel, project.year, ...(contextIsRedundant ? [] : [project.context])];
+
 const meta = [
   { label: "Year", value: project.year },
-  { label: "Type", value: categoryLabels[project.category] },
-  { label: "Context", value: project.context },
+  { label: "Type", value: categoryLabel },
+  ...(contextIsRedundant ? [] : [{ label: "Context", value: project.context }]),
   ...(project.role ? [{ label: "Role", value: project.role }] : []),
   ...(project.team ? [{ label: "Team", value: project.team }] : []),
 ];
@@ -53,11 +61,14 @@ const meta = [
         </a>
 
         <div class="mt-8 flex flex-wrap items-center gap-3">
-          <span class="label label-accent">{categoryLabels[project.category]}</span>
-          <span class="h-px w-6 bg-line-strong" aria-hidden="true"></span>
-          <span class="label">{project.year}</span>
-          <span class="h-px w-6 bg-line-strong" aria-hidden="true"></span>
-          <span class="label">{project.context}</span>
+          {
+            eyebrow.map((item, i) => (
+              <>
+                {i > 0 && <span class="h-px w-6 bg-line-strong" aria-hidden="true" />}
+                <span class:list={["label", i === 0 && "label-accent"]}>{item}</span>
+              </>
+            ))
+          }
         </div>
 
         <h1 class="mt-5 text-4xl font-semibold sm:text-5xl">{project.title}</h1>

@@ -22,10 +22,13 @@ export const site = {
   },
 
   /**
-   * TODO(aji): drop a PDF at `public/budi-aji-cv.pdf` to switch the résumé
-   * button on. While this is null the button simply is not rendered.
+   * Deliberately not hosting the CV. While this is null the site invites
+   * people to ask for it instead, which keeps the document off a public URL
+   * and turns the request into a conversation. Drop a PDF in `public/` and
+   * set the path here if you ever want the direct-download button back.
    */
   resumeUrl: null as string | null,
+  resumeOnRequest: "CV available on request — just ask.",
 
   /** Open to work / not looking. Drives the status pill in the header. */
   availability: {
