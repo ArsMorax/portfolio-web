@@ -1,0 +1,56 @@
+---
+import { modelComparison } from "../data/ai";
+
+const [a, b] = modelComparison.subjects;
+---
+
+<div>
+  <p data-reveal class="prose-body max-w-2xl">{modelComparison.intro}</p>
+
+  <div class="relative mt-8 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
+    {
+      [a, b].map((model, i) => (
+        <div
+          data-reveal
+          style={`--reveal-delay: ${i * 90}ms`}
+          class="bg-bg-raised p-6 sm:p-7"
+        >
+          <div class="flex items-center justify-between gap-3">
+            <h3 class="text-lg font-semibold">{model.name}</h3>
+            <span class="label">{model.role}</span>
+          </div>
+
+          <div class="mt-5 border-l-2 border-accent/50 pl-4">
+            <p class="label mb-1">Where it wins</p>
+            <p class="text-sm font-medium text-accent">{model.strength}</p>
+          </div>
+
+          <p class="mt-5 text-sm leading-relaxed text-fg-muted">
+            {model.observation}
+          </p>
+
+          <div class="mt-6 flex flex-wrap gap-1.5">
+            {model.signals.map((signal) => (
+              <span class="tag">{signal}</span>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+
+    {/* "vs" badge, centred on the divider. Decorative only. */}
+    <span
+      class="absolute left-1/2 top-1/2 hidden h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-line-strong bg-bg font-mono text-[10px] uppercase tracking-wider text-fg-subtle md:flex"
+      aria-hidden="true"
+    >
+      vs
+    </span>
+  </div>
+
+  <p
+    data-reveal
+    class="mt-6 border-l-2 border-line-strong pl-5 text-sm italic leading-relaxed text-fg-muted"
+  >
+    {modelComparison.takeaway}
+  </p>
+</div>

@@ -1,0 +1,58 @@
+---
+import { site } from "../data/site";
+import Social from "./Social.astro";
+---
+
+<section class="border-t border-line">
+  <div class="relative overflow-hidden">
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div
+        class="absolute bottom-0 left-1/2 h-[320px] w-[720px] max-w-full -translate-x-1/2 translate-y-1/2 rounded-full blur-3xl"
+        style="background: radial-gradient(circle, rgba(230,180,80,0.09) 0%, transparent 70%)"
+      >
+      </div>
+    </div>
+
+    <div class="relative mx-auto max-w-5xl px-6 py-24 text-center sm:py-28">
+      <p data-reveal class="label label-accent">Contact</p>
+
+      <h2 data-reveal style="--reveal-delay: 60ms" class="mx-auto mt-5 max-w-2xl text-3xl font-semibold sm:text-4xl">
+        Building something that needs the whole stack thinking about at once?
+      </h2>
+
+      <p data-reveal style="--reveal-delay: 120ms" class="prose-body mx-auto mt-5 max-w-xl">
+        I am {site.availability.open ? "open to opportunities" : "not currently looking"},
+        and always happy to talk about backend architecture, geospatial systems, or
+        what a model does when you push it past where it is comfortable.
+      </p>
+
+      <div data-reveal style="--reveal-delay: 180ms" class="mt-9 flex flex-wrap items-center justify-center gap-3">
+        <a href={`mailto:${site.email}`} class="btn btn-primary">
+          {site.email}
+        </a>
+        <a
+          href={site.socials.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-ghost"
+        >
+          Connect on LinkedIn
+        </a>
+      </div>
+
+      {
+        !site.resumeUrl && (
+          <p data-reveal style="--reveal-delay: 210ms" class="mt-5 text-sm text-fg-subtle">
+            {site.resumeOnRequest}
+          </p>
+        )
+      }
+
+      <div data-reveal style="--reveal-delay: 240ms" class="mt-8 flex items-center justify-center gap-3">
+        <Social href={site.socials.github} name="github" label="GitHub" />
+        <Social href={site.socials.linkedin} name="linkedin" label="LinkedIn" />
+        <Social href={`mailto:${site.email}`} name="mail" label="Email" />
+      </div>
+    </div>
+  </div>
+</section>

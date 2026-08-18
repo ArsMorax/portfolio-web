@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,17 +21,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
-      - run: npm run build
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Fails the build on a type or template error rather than shipping it.
+      - name: Type check
+        run: npm run check
+
+      - name: Build
+        run: npm run build:fast
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
+    # Pull requests get the build and type check, but never publish.
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:

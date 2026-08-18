@@ -1,36 +1,140 @@
 ---
 import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../data/site";
+import { canonicalUrl, withBase } from "../lib/url";
 
 interface Props {
   title: string;
   description?: string;
+  /** Overrides the <title> suffix. Home page passes its own full title. */
+  fullTitle?: string;
+  type?: "website" | "article";
 }
 
-const { title, description = "Muhammad Budi Aji's portfolio. Full-stack developer building web apps with React, Laravel, Vue, Go, and more." } = Astro.props;
+const {
+  title,
+  description = site.tagline,
+  fullTitle,
+  type = "website",
+} = Astro.props;
+
+const pageTitle = fullTitle ?? `${title} — ${site.shortName}`;
+const canonical = canonicalUrl(Astro.url.pathname, Astro.site);
+const ogImage = new URL(withBase("/og.png"), Astro.site ?? site.url).href;
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  alternateName: site.shortName,
+  jobTitle: site.role,
+  description: site.tagline,
+  email: `mailto:${site.email}`,
+  url: site.url,
+  sameAs: [site.socials.github, site.socials.linkedin],
+  knowsAbout: [
+    "Software Engineering",
+    "Backend Architecture",
+    "C#",
+    "TypeScript",
+    "Node.js",
+    "React",
+    "Python",
+    "Large Language Models",
+    "Geospatial Systems",
+  ],
+};
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`.replace(/\/\//g, '/')} />
+    <meta name="author" content={site.name} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={`${site.shortName} — ${site.role}`} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${site.role}`} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <meta name="theme-color" content="#0a0a0b" />
+    <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
+    <link rel="sitemap" href={withBase("/sitemap-index.xml")} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     />
-    <title>{title}</title>
-  </head>
-  <body class="min-h-screen bg-surface text-text antialiased">
-    <div class="fixed inset-0 -z-10 overflow-hidden">
-      <div class="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl"></div>
-      <div class="absolute top-1/3 -left-40 h-96 w-96 rounded-full bg-accent/10 blur-3xl"></div>
-      <div class="absolute -bottom-40 right-1/3 h-96 w-96 rounded-full bg-primary/5 blur-3xl"></div>
-    </div>
 
-    <slot />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(personSchema)}
+    />
+
+    {/* Applied before first paint so revealed elements never flash in then out. */}
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+
+  <body class="min-h-screen bg-bg text-fg antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-bg"
+    >
+      Skip to content
+    </a>
+
+    <Header />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      // Scroll reveal. Honours prefers-reduced-motion by revealing everything
+      // immediately rather than by animating faster.
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const targets = document.querySelectorAll<HTMLElement>("[data-reveal]");
+
+      if (reduced || !("IntersectionObserver" in window)) {
+        targets.forEach((el) => el.classList.add("is-revealed"));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add("is-revealed");
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+        );
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
   </body>
 </html>

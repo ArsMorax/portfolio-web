@@ -1,0 +1,53 @@
+---
+import { skillGroups, tierMeta } from "../data/skills";
+import type { Tier } from "../data/skills";
+
+const tierStyles: Record<Tier, string> = {
+  production: "bg-accent",
+  working: "bg-fg-muted",
+  exploring: "bg-line-strong",
+};
+---
+
+<div>
+  {/* Legend first — the tiers are the whole point, so explain them up front. */}
+  <div data-reveal class="flex flex-wrap gap-x-6 gap-y-2">
+    {
+      (Object.keys(tierMeta) as Tier[]).map((tier) => (
+        <div class="flex items-center gap-2">
+          <span class:list={["h-1.5 w-1.5 rounded-full", tierStyles[tier]]} aria-hidden="true" />
+          <span class="text-xs font-medium">{tierMeta[tier].label}</span>
+          <span class="text-xs text-fg-subtle">— {tierMeta[tier].description}</span>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="mt-8 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2">
+    {
+      skillGroups.map((group, i) => (
+        <div
+          data-reveal
+          style={`--reveal-delay: ${i * 70}ms`}
+          class="bg-bg-raised p-6 sm:p-7"
+        >
+          <h3 class="text-base font-semibold">{group.title}</h3>
+          <p class="mt-1.5 text-sm text-fg-subtle">{group.blurb}</p>
+
+          <ul class="mt-5 space-y-2.5">
+            {group.skills.map((skill) => (
+              <li class="flex items-center gap-2.5">
+                <span
+                  class:list={["h-1.5 w-1.5 shrink-0 rounded-full", tierStyles[skill.tier]]}
+                  aria-hidden="true"
+                />
+                <span class="text-sm text-fg-muted">{skill.name}</span>
+                <span class="sr-only">— {tierMeta[skill.tier].label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</div>
